@@ -51,7 +51,6 @@ func File2() {
 
 		// Construct the new file path
 		newPath := filepath.Join(dir, newFilename)
-		fmt.Printf("Renaming %s to %s\n", origPath, newPath)
 		fmt.Printf("Renaming %s to %s\n", yellow(origPath), green(newPath))
 		// Rename the file
 		err = os.Rename(origPath, newPath)
@@ -89,5 +88,5 @@ func matching(filename string) (string, error) {
 	}
 
 	// Increment the number and return the new filename
-	return fmt.Sprintf("%s.%d.%s", name, num+1, ext), nil
+	return fmt.Sprintf("%s_%d.%s", name, num+1, ext), nil
 }

@@ -53,7 +53,6 @@ func main() {
 
 		// Construct the new file path
 		newPath := filepath.Join(dir, newFilename)
-		fmt.Printf("Renaming %s to %s\n", origPath, newPath)
 		fmt.Printf("Renaming %s to %s\n", yellow(origPath), green(newPath))
 		// Rename the file
 		err = os.Rename(origPath, newPath)
@@ -64,9 +63,8 @@ func main() {
 
 	fmt.Println("The files have been successfully renamed.")
 
-	// Wait for 8 seconds
+	// Wait for 8 seconds and then rename the files back
 	time.Sleep(8 * time.Second)
-	// Rename the files back
 	revert.File2()
 }
 
@@ -96,5 +94,5 @@ func match(filename string) (string, error) {
 	}
 
 	// Increment the number and return the new filename
-	return fmt.Sprintf("%s - %d.%s", name, num+1, ext), nil
+	return fmt.Sprintf("%s-%d.%s", name, num, ext), nil
 }
