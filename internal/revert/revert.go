@@ -11,7 +11,7 @@ import (
 )
 
 func File2() {
-	dir := "./samples"
+	dir := "C:\\Users\\DrieMar\\Projekt_F\\GO\\cmd\\GoLearningPath\\samples"
 
 	green := color.New(color.FgGreen).SprintFunc()
 	yellow := color.New(color.FgYellow).SprintFunc()
@@ -86,7 +86,8 @@ func matching(filename string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("%s: invalid filename", filename)
 	}
+	formattedNum := fmt.Sprintf("%03d", num)
 
 	// Increment the number and return the new filename
-	return fmt.Sprintf("%s_%d.%s", name, num+1, ext), nil
+	return fmt.Sprintf("%s_%s.%s", name, formattedNum, ext), nil
 }

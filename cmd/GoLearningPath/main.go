@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -13,10 +14,37 @@ import (
 )
 
 func main() {
-	dir := "./samples"
 
 	green := color.New(color.FgGreen).SprintFunc()
 	yellow := color.New(color.FgYellow).SprintFunc()
+
+	folder := bufio.NewReader(os.Stdin)
+	fmt.Println("File Renamer")
+	fmt.Println("---------------------")
+
+	fmt.Println("Gib den Pfad (z.b. c:\\Users\\Name\\samples) von den Dateien an die umbenannt werden sollen")
+	fmt.Print(" -> ")
+	folderName, _ := folder.ReadString('\n')
+	folderName = strings.Replace(folderName, "\n", "", -1)
+	fmt.Printf("Der Ordner wird nach den Dateien mit dem Namen %s durchsucht \n", folderName)
+
+	dir := "C:\\Users\\DrieMar\\Projekt_F\\GO\\cmd\\GoLearningPath\\samples"
+
+	// read the Name of the file that needs to be changed from user
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("Gib den Namen der Datei an die geändert werden sollen (zahlen bitte mit * angeben)")
+	fmt.Print(" -> ")
+	oldName, _ := reader.ReadString('\n')
+	oldName = strings.Replace(oldName, "\n", "", -1)
+	fmt.Printf("Der Ordner wird nach den Dateien mit dem Namen %s durchsucht \n", yellow(oldName))
+
+	// Collect the Name that the file should be renambed to from user
+	reader2 := bufio.NewReader(os.Stdin)
+	fmt.Println("Gib den Namen an zu dem die Datei geändert werden soll (zahlen bitte mit * angeben (anzahl der * = anzahl der Nullen))")
+	fmt.Print(" -> ")
+	newName, _ := reader2.ReadString('\n')
+	newName = strings.Replace(newName, "\n", "", -1)
+	fmt.Printf("Die gefundenen Dateien werden mit den angegebenen Namen %s geändert \n", green(newName))
 
 	// Read all the entries in the directory
 	entries, err := os.ReadDir(dir)
