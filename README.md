@@ -13,8 +13,9 @@ The process of this program is:
 
 3. after the scan it beginns to rename the files to the respective new name that it is given.
 
-(Just for testing)
+
+<p>(Just for testing)</p><br>
 4. After 8 second the files will be reverted back
-    - just so I dont have to rename them back after each run. (for conveniens)
+    - just so I dont have to rename them back after each run. (for convenience)
 
 5. In the Future: add checks after it changed the files to the new names to let the user check if it was successfully done or if not revert back to the old name and try again
