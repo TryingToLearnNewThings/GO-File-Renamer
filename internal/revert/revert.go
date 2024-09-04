@@ -1,10 +1,11 @@
 package revert
 
 import (
+	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 
 	"github.com/fatih/color"
@@ -15,79 +16,43 @@ func File2() {
 
 	green := color.New(color.FgGreen).SprintFunc()
 	yellow := color.New(color.FgYellow).SprintFunc()
+	red := color.New(color.FgRed).Add(color.Underline).SprintFunc()
+	blue := color.New(color.FgBlue).Add(color.Underline).SprintFunc()
 
-	// Read all the entries in the directory
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error:", err)
-		return
-	}
+	filenames := bufio.NewReader(os.Stdin)
+	fmt.Print("Gib die Namen der Dateien an, die umbenannt werden sollen (z.B. birthday_001.txt): ")
 
-	// create an empty slice to store the files that need to be renamed
-	var renames []string
-	for _, entry := range entries {
-		// Skip directories
-		if entry.IsDir() {
-			continue
-		}
-		filename := entry.Name()
+	oldFilenames, _ := filenames.ReadString('\n')
+	oldFilenames = strings.TrimSpace(oldFilenames)
+	fmt.Printf("\nDer Ordner werden nach '%s' durchsucht\n\n", blue(oldFilenames))
 
-		// Check if the file needs to be renamed
-		if _, err := matching(filename); err == nil {
-			// Add the filename to the list of files to rename
-			renames = append(renames, filename)
-		}
-	}
-	for _, filename := range renames {
-		// Construct the original file path
-		origPath := filepath.Join(dir, filename)
+	filenames2 := bufio.NewReader(os.Stdin)
+	fmt.Print("Gib den neuen Namen an, zudem die Dateien umbenannt werden sollen (z.B. birthday-1.txt): ")
 
-		// Get the new filename by matching the original filename
-		newFilename, err := matching(filename)
+	newFilenames, _ := filenames2.ReadString('\n')
+	newFilenames = strings.TrimSpace(newFilenames)
+	fmt.Printf("\nDie ausgewählten Dateien werden von '%s' zu '%s' umbenannt\n\n", yellow(oldFilenames), green(newFilenames))
+
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Error:", err)
-			return
+			fmt.Println("Fehler beim Durchsuchen:", red(err))
+			return err
+		}
+		if !info.IsDir() {
+			log.Printf("Processing file: %s\n", info.Name())
+		}
+		if strings.Contains(info.Name(), oldFilenames) {
+			err := os.Rename(path, filepath.Join(filepath.Dir(path), newFilenames))
+			if err != nil {
+				fmt.Println("Fehler beim umbenennen:", red(err))
+				return err
+			}
 		}
 
-		// Construct the new file path
-		newPath := filepath.Join(dir, newFilename)
-		fmt.Printf("Renaming %s to %s\n", yellow(origPath), green(newPath))
-		// Rename the file
-		err = os.Rename(origPath, newPath)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, "Error:", err)
-		}
-	}
-
-	fmt.Println("The files have been successfully renamed back.")
-}
-
-func matching(filename string) (string, error) {
-	// Split the filename into base and extension
-	parts := strings.SplitN(filename, ".", 2)
-	if len(parts) != 2 {
-		return "", fmt.Errorf("%s: invalid filename", filename)
-	}
-
-	base := parts[0]
-	ext := parts[1]
-
-	// Split the base into name and number
-	pieces := strings.Split(base, "-")
-	if len(pieces) < 2 {
-		return "", fmt.Errorf("%s: invalid filename", filename)
-	}
-
-	name := strings.Join(pieces[:len(pieces)-1], "_")
-	numStr := pieces[len(pieces)-1]
-
-	// Convert the number to an integer
-	num, err := strconv.Atoi(numStr)
+		return nil
+	})
+	fmt.Println(blue("\n\nDie Datei wurde umbenannt"))
 	if err != nil {
-		return "", fmt.Errorf("%s: invalid filename", filename)
+		log.Fatal(err)
 	}
-	formattedNum := fmt.Sprintf("%03d", num)
-
-	// Increment the number and return the new filename
-	return fmt.Sprintf("%s_%s.%s", name, formattedNum, ext), nil
 }

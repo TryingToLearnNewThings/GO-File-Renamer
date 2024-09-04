@@ -13,8 +13,8 @@ The process of this program is:
 
 3. after the scan it beginns to rename the files to the respective new name that it is given.
 
-
-<p>(Just for testing)</p><br>
+<br>
+<p>(Just for testing)</p>
 4. After 8 second the files will be reverted back
     - just so I dont have to rename them back after each run. (for convenience)
 
